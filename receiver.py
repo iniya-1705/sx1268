@@ -19,10 +19,8 @@ lora.setLoRaPacket(8, True, 255, False, True)
 print("LoRa RX started...")
 
 while True:
-    if lora.available():
-        raw_bytes = []
-        while lora.available():
-            raw_bytes.append(lora.read())   # ✅ direct byte values
-        msg = "".join([chr(b) for b in raw_bytes])  # convert back to string
+    if lora.request():   # ✅ wait for a full packet
+        payload = lora.readBuffer()   # ✅ read full message at once
+        msg = "".join([chr(b) for b in payload])
         print("Received:", msg, "| RSSI:", lora.packetRssi())
     time.sleep(0.1)
