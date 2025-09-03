@@ -23,9 +23,9 @@ while True:
     msg = f"Hello LoRa #{count}"
     print("Sending:", msg)
 
-    # ✅ Correct way to send
     lora.beginPacket()
-    lora.write(msg.encode())
+    for ch in msg:       # ✅ write characters one by one
+        lora.write(ord(ch))
     lora.endPacket()
 
     time.sleep(2)
