@@ -1,29 +1,24 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
+# -*- coding: UTF-8 -*-
+
+import sx126x
 import time
-from LoRaRF import SX126x
 
-# Initialize LoRa
-lora = SX126x()
+# Initialize LoRa module
+node = sx126x.sx126x(
+    serial_num="/dev/ttyS0",
+    freq=868,         # Must match sender frequency
+    addr=0,           # Node address
+    power=22,
+    rssi=True,        # Show signal strength
+    air_speed=2400,
+    relay=False
+)
 
-def setup():
-    print("LoRa Receiver Init...")
-    lora.begin()
-    lora.setFrequency(433000000)          # 433 MHz (must match TX)
-    lora.setRxGain(0x94, 0xF5)            # Recommended RX gain
-    lora.setLoRaModulation(7, 5, 125000)  # Same as TX
-    lora.setLoRaPacket(8, True, 255, False, True)
-
-def loop():
-    if lora.available():
-        length = lora.available()
-        msg = ""
-        for i in range(length):
-            msg += chr(lora.read())
-        print("Received:", msg)
-
-    time.sleep(0.5)
-
-if __name__ == "__main__":
-    setup()
+print("📡 Receiver started... Listening for messages at 868 MHz")
+try:
     while True:
-        loop()
+        node.receive()   # Continuously listen
+        time.sleep(0.1)  # Small delay
+except KeyboardInterrupt:
+    print("\nExiting Receiver...")
